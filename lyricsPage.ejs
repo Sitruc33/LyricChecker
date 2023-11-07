@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html> 
+<head>
+    <%- include('./partials/head') %>
+    
+</head>
+<body>
+    
+
+    <%- include('./partials/nav.ejs') %>
+    <button onclick="myFunction()" style="background-color: black; color: red; width: 200px; height: 75px;">Click this to reload page and see updated results</button>
+
+    <script >
+        function myFunction() {
+            location.reload();
+        }
+        
+        
+        </script>
+
+    <h1> Lyrics: </h1>
+    <%- include('./partials/lyrics.html') %>
+</body>
+</html>

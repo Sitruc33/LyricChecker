@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <%- include('./partials/head.ejs') %>
+    
+    
+</head>
+<body>
+    
+    <%- include('./partials/nav.ejs') %>
+    
+    
+    
+    <div class="blogs content">
+        <h2>All Blogs</h2>
+
+        <form action = "http://localhost:1337/post" method = "POST" id="textInputForm">
+            <label for="userInput">Enter text:</label>
+            <input type="text" id="userInput" name="userInput">
+            <button type="submit" >Submit</button>
+          </form>
+        
+          <p>User's input: <span id="userInputDisplay"></span></p>
+
+          
+          
+        
+          
+    </div>
+    <%- include('./partials/footer.ejs') %>
+</body>
+</html>
