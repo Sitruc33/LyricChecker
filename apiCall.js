@@ -3,6 +3,8 @@ const fs = require('fs');
 var songID;
 var lyrics;
 var textFormat = 'plain';
+var keywordCounts;
+const keywordsToSearchFor = new Set(['fuck', 'shit', 'bitch', 'damn', 'hoe', ]);
 
 
 
@@ -98,10 +100,20 @@ function callSecondApi(pSongID) {
                 if (apiResponse2.lyrics && apiResponse2.lyrics.lyrics && apiResponse2.lyrics.lyrics.body) {
                 lyrics = apiResponse2.lyrics.lyrics.body.html;
                 console.log(' /t Here are the lyrics:  /n ', lyrics);
+                
                 fs.writeFileSync('./views/partials/lyrics.html', lyrics, () => {
                     console.log('file written');
                 } );
+                
+                
+                
+  
+                keywordCounts = countKeywords(lyrics, keywordsToSearchFor);
+                console.log(keywordCounts);
+                
                 resolve();
+
+
                 } else{
                     reject( new Error('Something went wrong with the second api call'));
                 }
@@ -127,18 +139,65 @@ function replaceSpaces(inputString) {
     return result;
   }
 
+function countKeywords(text, keywordSet) {
+    
+    if (typeof text !== 'string') {
+        throw new Error('The input text must be a string.');
+      }
+    
+      // Convert the text to lowercase for case-insensitive matching
+      const lowercaseText = text.toLowerCase();
+    
+      // Initialize an object to store keyword counts and occurrences
+      const keywordCountsAndOccurrences = {};
+    
+      // Iterate through the keywords in the keyword set
+      keywordSet.forEach(keyword => {
+        if (typeof keyword !== 'string') {
+          throw new Error('Keywords in the set must be strings.');
+        }
+    
+        // Use the lowercase keyword for case-insensitive matching
+        const lowercaseKeyword = keyword.toLowerCase();
+    
+        // Create a regular expression pattern for the keyword
+        const keywordPattern = new RegExp(lowercaseKeyword, 'gi');
+    
+        // Use test() to check if the keyword pattern is found in the text
+        const isKeywordPresent = keywordPattern.test(lowercaseText);
+    
+        // Count the number of occurrences
+        const count = isKeywordPresent ? (lowercaseText.match(keywordPattern) || []).length : 0;
+    
+        // Store the count and occurrence flag in the keywordCountsAndOccurrences object
+        keywordCountsAndOccurrences[keyword] = {
+          count,
+          isPresent: isKeywordPresent,
+        };
+      });
+    
+      return keywordCountsAndOccurrences;
+  }
+  
+  
+  
+  
+
 function runApiCall(pSongTitle) {
 callFirstApi(pSongTitle)
-  .then((songID) => callSecondApi(songID))
+  .then((songID) => callSecondApi(songID)   )
   .catch((error) => {
     console.error(error.message);
   });
+
+  return keywordCounts;
+
 }
 
 //runApiCall('All Too Well');
 
 
-module.exports = { runApiCall };
+module.exports = { runApiCall  };
  
 
 

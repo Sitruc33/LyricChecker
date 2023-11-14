@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Blog = require('./models/blog');
-const runApiCall = require('./public/apiCall');
+const apiCall = require('./apiCall');
 const bodyParser = require('body-parser');
 
 var num= 0;
@@ -65,19 +65,15 @@ app.get('/', (req,res) => {
 
 
 app.post('/post', (req, res) => {
-  runApiCall.runApiCall(req.body.userInput);
+  data = apiCall.runApiCall(req.body.userInput);
+  console.log('Here is the data object for lyric count' + data);
   
-  // res.sendFile('lyrics.html', {root : __dirname + '/views/partials'});
-
-  res.redirect('/lyrics');
+  res.render('lyricsPage', {title: 'lyrics', data})
+  
+   // res.redirect('/lyrics');
 });
 
- app.get('/lyrics', (req,res) => {
-    res.render('lyricsPage', {title: 'home'});
-    if (num == 1) {
-        res.render('lyricsPage', {title: 'home'});
-    }
-});
+ 
 
 
 
@@ -86,9 +82,7 @@ app.get('/about', (req,res) => {
     res.render('about', {title: 'About'});
 });
 
-app.get('/blogs/create', (req,res) => {
-    res.render('create', {title: 'Create a new blog'});
-});
+
 
 //404
 app.use((req,res) => {

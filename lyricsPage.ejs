@@ -6,8 +6,20 @@
 </head>
 <body>
     
-
+    
     <%- include('./partials/nav.ejs') %>
+    <h1>Keyword Counts</h1>
+    
+    <% if (data) { %>
+        <% Object.entries(data).forEach(([keyword, data]) => { %>
+            <div>
+                <p>Keyword: <%= keyword %>, Count: <%= data.count %> </p>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>No keyword counts available.</p>
+    <% } %>
+
     <button onclick="myFunction()" style="background-color: black; color: red; width: 200px; height: 75px;">Click this to reload page and see updated results</button>
 
     <script >
