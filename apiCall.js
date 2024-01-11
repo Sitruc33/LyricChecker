@@ -4,7 +4,7 @@ var songID;
 var lyrics;
 var textFormat = 'plain';
 var keywordCounts;
-const keywordsToSearchFor = new Set(['fuck', 'shit', 'bitch', 'damn', 'hoe', ]);
+const keywordsToSearchFor = new Set(['fuck', 'shit', 'bitch', 'damn', 'hoe' ]);
 
 
 
@@ -99,11 +99,9 @@ function callSecondApi(pSongID) {
 
                 if (apiResponse2.lyrics && apiResponse2.lyrics.lyrics && apiResponse2.lyrics.lyrics.body) {
                 lyrics = apiResponse2.lyrics.lyrics.body.html;
-                console.log(' /t Here are the lyrics:  /n ', lyrics);
+                console.log(' \t Here are the lyrics:  \n   ' + lyrics);
                 
-                fs.writeFileSync('./views/partials/lyrics.html', lyrics, () => {
-                    console.log('file written');
-                } );
+                fs.writeFileSync('./views/partials/lyrics.html', lyrics);
                 
                 
                 
@@ -111,7 +109,7 @@ function callSecondApi(pSongID) {
                 keywordCounts = countKeywords(lyrics, keywordsToSearchFor);
                 console.log(keywordCounts);
                 
-                resolve();
+                resolve(keywordCounts);
 
 
                 } else{
@@ -134,7 +132,7 @@ function callSecondApi(pSongID) {
 }
 
 function replaceSpaces(inputString) {
-    // Use a regular expression to match all spaces globally and replace them with '%'
+    // Use a regular expression to match all spaces globally and replace them with '%20'
     const result = inputString.replace(/ /g, '%20');
     return result;
   }
@@ -183,18 +181,26 @@ function countKeywords(text, keywordSet) {
   
   
 
-function runApiCall(pSongTitle) {
-callFirstApi(pSongTitle)
-  .then((songID) => callSecondApi(songID)   )
-  .catch((error) => {
-    console.error(error.message);
-  });
-
-  return keywordCounts;
-
-}
-
-//runApiCall('All Too Well');
+  function runApiCall(pSongTitle) {
+    return new Promise((resolve, reject) => {
+      let temp;
+  
+      callFirstApi(pSongTitle)
+        .then((songID) => callSecondApi(songID))
+        .then((keywordCount) => {
+          console.log(".then statement");
+          temp = keywordCount;
+          console.log(temp);
+          resolve(temp); // Resolve the outer promise with the final result
+        })
+        .catch((error) => {
+          console.error(error.message);
+          reject(new Error('Something went wrong with the runApiCall function'));
+        });
+    });
+  }
+  
+//runApiCall('Pete Davidson');
 
 
 module.exports = { runApiCall  };
